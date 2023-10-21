@@ -7,4 +7,4 @@ To build and run locally: 'go build site.go' to create the executable file | 'go
 
 Good luck.
 
-🤘Hope you enjoy it! 
+🤘
