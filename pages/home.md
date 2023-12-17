@@ -7,7 +7,7 @@ description: The home page of go-forth, a template for building static sites wit
 
 It's a template for building static sites with Go. 
 
-## Go forth and build static sites my friend.
+## Go forth and build static sites, my friend.
 
 Best,
 
