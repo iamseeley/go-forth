@@ -11,7 +11,7 @@ import (
 
 	"github.com/go-yaml/yaml"
 	"github.com/russross/blackfriday/v2"
-	"go-forth2.0/internal/config"
+	"go-forth2.0/build/internal/config"
 )
 
 // Define a data structure for your site pages
@@ -81,7 +81,7 @@ func BuildSite() {
 	}
 
 	contentDir := cfg.ContentPath // Directory containing Markdown files
-	outputDir := "output/"        // Directory to save generated HTML files
+	outputDir := cfg.OutputPath   // Directory to save generated HTML files
 
 	// Ensure output directory exists
 	os.MkdirAll(outputDir, os.ModePerm)

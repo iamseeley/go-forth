@@ -13,7 +13,7 @@ import (
 
 	"github.com/go-yaml/yaml"
 	"github.com/russross/blackfriday/v2"
-	"go-forth2.0/internal/config"
+	"go-forth2.0/build/internal/config"
 )
 
 // Now you can use cfg to access your configuration settings
