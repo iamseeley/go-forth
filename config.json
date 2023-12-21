@@ -1,0 +1,7 @@
+{
+    "siteTitle": "My Awesome Site",
+    "siteDescription": "This is a description of my awesome site.",
+    "templatePath": ",/templates/",
+    "contentPath": "./content/",
+    "outputPath": "./output/"
+}
