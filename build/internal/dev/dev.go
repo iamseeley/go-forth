@@ -152,7 +152,7 @@ func StartServer() {
 		}
 	})
 	// http.Handle("/", http.RedirectHandler("/index", http.StatusSeeOther))
-	fs := http.FileServer(http.Dir("public"))
+	fs := http.FileServer(http.Dir("src/public"))
 	http.Handle("/public/", http.StripPrefix("/public/", fs))
 	// http.HandleFunc("/", makeHandler(pageHandler))
 	port := os.Getenv("PORT")

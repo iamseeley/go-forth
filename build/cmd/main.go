@@ -5,8 +5,8 @@ import (
 	"log"
 	"os"
 
-	"go-forth2.0/internal/dev"
-	"go-forth2.0/internal/static"
+	"go-forth2.0/build/internal/dev"
+	"go-forth2.0/build/internal/static"
 )
 
 func main() {
