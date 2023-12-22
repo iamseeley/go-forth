@@ -3,7 +3,7 @@
     src: url(/public/Ranade_Complete/Fonts/WEB/fonts/Ranade-Variable.woff) format('truetype');
   } */
 
-body {
+  body {
     line-height: 2;
     letter-spacing: .2px;
 }

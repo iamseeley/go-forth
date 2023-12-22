@@ -3,5 +3,6 @@
     "siteDescription": "This is a description of my awesome site.",
     "templatePath": ",/templates/",
     "contentPath": "./content/",
-    "outputPath": "./src/"
+    "outputPath": "./src/",
+    "themeName": "default"
 }
