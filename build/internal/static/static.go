@@ -164,6 +164,22 @@ func loadData(directory string) (map[string]interface{}, error) {
 	return data, nil
 }
 
+func loadTemplates() error {
+	var err error
+	templates, err = template.New("").Funcs(template.FuncMap{"markDown": markDowner}).ParseGlob("templates/*.html")
+	if err != nil {
+		return fmt.Errorf("error loading templates: %w", err)
+	}
+	return nil
+}
+
+func init() {
+	err := loadTemplates()
+	if err != nil {
+		log.Fatalf("Failed to load templates: %v", err)
+	}
+}
+
 // BuildSite generates static HTML files from Markdown content
 func BuildSite() {
 	cfg, err := config.LoadConfig("./config.json")
@@ -219,7 +235,7 @@ func markDowner(args ...interface{}) template.HTML {
 	return template.HTML(s)
 }
 
-var templates = template.Must(template.New("").Funcs(template.FuncMap{"markDown": markDowner}).ParseGlob("templates/*.html"))
+var templates *template.Template
 
 // generateHTML converts a Markdown file to HTML and saves it
 func generateHTML(mdPath, outputDir string, data map[string]interface{}, cfg *config.Config) error {
