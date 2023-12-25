@@ -235,13 +235,20 @@ func markDowner(args ...interface{}) template.HTML {
 	return template.HTML(s)
 }
 
+func renderTemplate(tmpl string, content interface{}) {
+	err := templates.ExecuteTemplate(os.Stdout, tmpl, content)
+	if err != nil {
+		log.Printf("Error rendering template: %v", err)
+	}
+}
+
 var templates *template.Template
 
-// generateHTML converts a Markdown file to HTML and saves it
 func generateHTML(mdPath, outputDir string, data map[string]interface{}, cfg *config.Config) error {
 	// Extract the relative path of the Markdown file from the content directory
 	relativePath, err := filepath.Rel(cfg.ContentPath, mdPath)
 	if err != nil {
+		log.Printf("Error getting relative path: %v", err)
 		return err
 	}
 
@@ -258,12 +265,21 @@ func generateHTML(mdPath, outputDir string, data map[string]interface{}, cfg *co
 
 	// Create the necessary directories in the output path
 	if err := os.MkdirAll(filepath.Dir(outputPath), os.ModePerm); err != nil {
+		log.Printf("Error creating directories: %v", err)
 		return err
 	}
 
+	// page, err := loadPageFromDirectory(filepath.Dir(mdPath)+"/", filepath.Base(mdPath))
+	// if err != nil {
+	// 	log.Printf("Error loading page from directory: %v", err)
+	// 	return err
+	// }
+
 	page, err := loadPageFromDirectory(filepath.Dir(mdPath)+"/", filepath.Base(mdPath))
 	if err != nil {
-		return err
+		log.Printf("Error loading page: %v", err)
+
+		return err // Log the error for debugging
 	}
 
 	// Determine template based on the collection (parent directory name)
@@ -277,6 +293,8 @@ func generateHTML(mdPath, outputDir string, data map[string]interface{}, cfg *co
 		tmpl = templates.Lookup("site.html")
 	}
 
+	log.Printf("Executing template with Page: %+v", page)
+
 	var rendered bytes.Buffer
 	err = tmpl.Execute(&rendered, struct {
 		Page *Page
@@ -286,9 +304,25 @@ func generateHTML(mdPath, outputDir string, data map[string]interface{}, cfg *co
 		Data: data,
 	})
 	if err != nil {
+		log.Printf("Error executing template: %v", err)
 		return err
 	}
 
+	renderTemplate(tmplName, rendered)
+
+	log.Printf("Rendered HTML length: %d", rendered.Len())
+
+	// Check if rendered content is empty
+	if rendered.Len() == 0 {
+		log.Println("Warning: Rendered content is empty. Check template and data.")
+	}
+
 	// Save the rendered HTML
-	return os.WriteFile(outputPath, rendered.Bytes(), 0644)
+	err = os.WriteFile(outputPath, rendered.Bytes(), 0644)
+	if err != nil {
+		log.Printf("Error writing file: %v", err)
+		return err
+	}
+
+	return nil
 }

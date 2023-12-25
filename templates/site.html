@@ -12,6 +12,12 @@
     
     <main>
         <h2>{{.Page.Title}}</h2>
+        <!-- In your homepage template -->
+        <!-- In your homepage template -->
+        <div id="currentDateTime">Loading date and time...</div>
+        <script src="/public/js/datetime.js"></script>
+
+
         {{ .Page.Body | markDown }}
         {{ range .Data.projects }}
             <div>

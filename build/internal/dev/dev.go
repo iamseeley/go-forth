@@ -192,6 +192,11 @@ func pageHandler(w http.ResponseWriter, r *http.Request, filePath string) {
 
 	log.Printf("Constructed file path: %s", filePath)
 
+	data, err := loadData("data")
+	if err != nil {
+		log.Printf("Failed to load data: %v", err)
+	}
+
 	p, err := loadPageFromDirectory(cfg.ContentPath, filePath)
 	if err != nil {
 		log.Printf("Error loading page: %v", err) // Log the error for debugging
@@ -200,13 +205,6 @@ func pageHandler(w http.ResponseWriter, r *http.Request, filePath string) {
 	}
 
 	collection := filepath.Base(filepath.Dir(filePath))
-
-	data, err := loadData("data")
-	if err != nil {
-		log.Printf("Failed to load data: %v", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
 
 	templateData := struct {
 		Page *Page
@@ -368,19 +366,22 @@ func StartServer() {
 	go watchContentDirectory("content", "templates")
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/" {
+		switch {
+		case r.URL.Path == "/":
 			// Serve 'index.md' from the 'page' directory for the root path
 			pageHandler(w, r, "page/index.md")
-		} else if strings.HasPrefix(r.URL.Path, "/page/") {
-			// Handle 'page' collection routes
-			strippedPath := strings.TrimPrefix(r.URL.Path, "/page/")
-			pageHandler(w, r, filepath.Join("page", strippedPath+".md"))
-		} else {
+		case !strings.Contains(r.URL.Path[1:], "/"):
+			// Handle 'page' collection routes without the 'page' prefix in the URL
+			// For example, "/about" will serve "page/about.md"
+			strippedPath := strings.TrimPrefix(r.URL.Path, "/")
+			pageHandler(w, r, fmt.Sprintf("page/%s.md", strippedPath))
+		default:
 			// Handle other collection routes
-			// Assuming the path already includes the collection name
+			// For example, "/post/post1" will serve "post/post1.md"
 			pageHandler(w, r, r.URL.Path[1:]+".md") // [1:] to remove the leading '/'
 		}
 	})
+
 	// http.Handle("/", http.RedirectHandler("/index", http.StatusSeeOther))
 	fs := http.FileServer(http.Dir("src/public"))
 	http.Handle("/public/", http.StripPrefix("/public/", fs))
