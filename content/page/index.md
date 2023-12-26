@@ -1,5 +1,5 @@
 ---
-title: 'Go-Forth'
+title: 'Go-Forth 2.0'
 description: 'Post 1 this is.'
 ---
 

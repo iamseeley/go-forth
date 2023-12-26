@@ -12,13 +12,19 @@
     
     <main>
         <h2>{{.Page.Title}}</h2>
-        <div id="currentDateTime">Loading date and time...</div>
-        <script src="/public/js/datetime.js"></script>
+        <div id="last-updated">...loading</div>
+        <script src="/public/js/lastupdated.js"></script>
         {{ .Page.Body | markDown }}
         {{ range .Data.projects }}
             <div>
-                <h3>{{ .name }}</h3>
+                <h3>{{ .title }}</h3>
                 <p>{{ .description }}</p>
+            </div>
+        {{ end }}
+
+        {{ range .Data.posts }}
+            <div>
+                <a href="{{ .url }}">{{ .title }}<span><i>{{ .date }}</i></span></a>
             </div>
         {{ end }}
 
