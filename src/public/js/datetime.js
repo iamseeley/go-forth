@@ -1,4 +1,4 @@
-// In static/js/datetime.js
+
 function updateDateTime() {
     var now = new Date();
     var dateString = now.toDateString();

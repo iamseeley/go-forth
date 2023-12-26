@@ -1,8 +1,9 @@
 {
-    "siteTitle": "My Awesome Site",
-    "siteDescription": "This is a description of my awesome site.",
-    "templatePath": ",/templates/",
+    "siteTitle": "Static Site",
+    "siteDescription": "This is a description of my static site.",
+    "templatePath": "./templates/",
     "contentPath": "./content/",
     "outputPath": "./src/",
-    "themeName": "default"
+    "themeName": "default",
+    "dataPath": "./data/"
 }

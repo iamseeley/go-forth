@@ -12,6 +12,7 @@ type Config struct {
 	ContentPath     string `json:"contentPath"`
 	OutputPath      string `json:"outputPath"`
 	ThemeName       string `json:"themeName"`
+	DataPath        string `json:"dataPath"`
 	// Add other configuration fields as needed
 }
 

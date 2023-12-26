@@ -53,7 +53,7 @@ func loadPageFromDirectory(directory, title string) (*Page, error) {
 
 	page.Theme = cfg.ThemeName
 
-	page.Body = body
+	page.Body = blackfriday.Run(body)
 
 	return &page, nil
 }
@@ -293,36 +293,39 @@ func generateHTML(mdPath, outputDir string, data map[string]interface{}, cfg *co
 		tmpl = templates.Lookup("site.html")
 	}
 
+	newdata, err := loadData("data")
+	if err != nil {
+		log.Printf("Failed to load data: %v", err)
+	}
+
 	log.Printf("Executing template with Page: %+v", page)
 
-	var rendered bytes.Buffer
-	err = tmpl.Execute(&rendered, struct {
+	templateData := struct {
 		Page *Page
 		Data map[string]interface{}
 	}{
 		Page: page,
-		Data: data,
-	})
+		Data: newdata,
+	}
+
+	outputFile, err := os.Create(outputPath)
 	if err != nil {
-		log.Printf("Error executing template: %v", err)
+		log.Printf("Error creating file: %v", err)
 		return err
 	}
+	defer outputFile.Close()
 
-	renderTemplate(tmplName, rendered)
-
-	log.Printf("Rendered HTML length: %d", rendered.Len())
-
-	// Check if rendered content is empty
-	if rendered.Len() == 0 {
-		log.Println("Warning: Rendered content is empty. Check template and data.")
+	err = tmpl.ExecuteTemplate(outputFile, tmplName, templateData)
+	if err != nil {
+		log.Printf("Error rendering template: %v", err)
+		return err
 	}
-
 	// Save the rendered HTML
-	err = os.WriteFile(outputPath, rendered.Bytes(), 0644)
-	if err != nil {
-		log.Printf("Error writing file: %v", err)
-		return err
-	}
+	// err = os.WriteFile(outputPath, templateData.Page.Body, 0644)
+	// if err != nil {
+	// 	log.Printf("Error writing file: %v", err)
+	// 	return err
+	// }
 
 	return nil
 }
