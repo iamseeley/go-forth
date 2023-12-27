@@ -3,10 +3,45 @@ title: 'Go-Forth 2.0'
 description: 'Post 1 this is.'
 ---
 
-A static site generator written in Go.
+**A static site generator written in Go.**
 
-[about page](/about)
+### Getting Started
 
-[post 1](/post/post1)
+- Clone the repository
+- Make sure you have Go installed 
+- Run "go get" to install dependencies
+- To build use go 
+- To run the dev server use
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. [Duis](/) aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+### Add Content
+
+Add Markdown files to the content directory. Folders within the content directory are collections of content. The page collection is special because markdown files placed here resolve to /$filename. You should place your index.md file here, which will resolve to the route of your site. 
+
+### Create Collections
+
+Want to create a new collection? Just add a folder to the content directory. If you are running the dev server, a corresponding template will be created for the collection in the template directory. 
+
+### Display Data
+
+If you want to display some data add a json file with some objects to the data directory. Then in the template you would like to display the data add a {{ range .Data.$filename }}
+                {{ .$key }}
+                {{ .$key }}
+        {{ end }} to display a list of your data.
+
+### Create Themes
+
+I decided to create a themes directory where you can add css files and then point to the one you want to use in the config file. When you build the site the theme will get copied to the assets' css directory. You can add your other static assets like images and js files to the assets directory.
+
+### Edit & Create Templates
+
+Add html templates to the templates directory to provide some structure to your content. This project uses Go's html/template package. I recommend reading the documentation to learn more about its templating features.
+
+### Production
+
+When you build the site for production all the necessary files will be placed in the src directory. This is the directory you will want to point to when hosting your site.
+
+### Housekeeping
+
+The routes will have the .html extension. If your hosting provider has a way to clean the url, I recommend doing that or you will need to add the .html extension to all the routes in your project. I'm working on a way to fix this. The dev server is setup so that routes resolve without the .html file extension.
+
+### Thanks to

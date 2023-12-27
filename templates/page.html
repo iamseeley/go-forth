@@ -8,25 +8,12 @@
     <link type="text/css" rel="stylesheet" href="/public/css/{{.Page.Theme}}.css">
 </head>
 <body>
-    <header><nav><div></div><a href="/">home</a><a href="/">post</a></nav></header>
+    <header><nav><div></div><h2>{{.Page.Title}}</h2></nav></header>
     
     <main>
-        <h2>{{.Page.Title}}</h2>
-        <div id="last-updated">...loading</div>
-        <script src="/public/js/lastupdated.js"></script>
+        
+        
         {{ .Page.Body | markDown }}
-        {{ range .Data.projects }}
-            <div>
-                <h3>{{ .title }}</h3>
-                <p>{{ .description }}</p>
-            </div>
-        {{ end }}
-
-        {{ range .Data.posts }}
-            <div>
-                <a href="{{ .url }}">{{ .title }}<span><i>{{ .date }}</i></span></a>
-            </div>
-        {{ end }}
 
     </main>
     <footer>made by Thomas</footer>

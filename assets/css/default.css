@@ -3,15 +3,24 @@
     src: url(/public/Ranade_Complete/Fonts/WEB/fonts/Ranade-Variable.woff) format('truetype');
   } */
 
+
   body {
+    margin: auto;
+    max-width: 624px;
     line-height: 2;
     letter-spacing: .2px;
 }
 
+h1, h2, h3, h4, h5 {
+    line-height: 1.5;
+}
+
 nav {
     align-items: center;
-    padding: 8px;
-    border: 1px solid black;
+    border-bottom: 2px dotted black;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    padding-top: 8px;
     display: flex;
     flex-direction: row;
     gap: 8px;
@@ -35,6 +44,10 @@ nav a {
 
 }
 
+nav h2 {
+    line-height: .5;
+}
+
 main a {
     /* box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px; */
     
@@ -43,12 +56,12 @@ main a {
     padding: 2px;
     padding-left: 4px;
     padding-right: 4px;
-    background-color: rgb(220, 220, 220);
-    border-radius: 4px;
+    
 }
 
 main a:hover {
- 
+    background-color: blueviolet;
     box-shadow: none;
+    color: white;
 }
 

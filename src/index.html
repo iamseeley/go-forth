@@ -4,30 +4,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Go-Forth - Go-Forth</title>
+    <title>Go-Forth - Go-Forth 2.0</title>
     <link type="text/css" rel="stylesheet" href="/public/css/default.css">
 </head>
 <body>
-    <header><nav><div></div><a href="/">home</a><a href="/">post</a></nav></header>
+    <header><nav><div></div><h2>Go-Forth 2.0</h2></nav></header>
     
     <main>
-        <h2>Go-Forth</h2>
-        <div id="currentDateTime">Loading date and time...</div>
-        <script src="/public/js/datetime.js"></script>
-        <p>A static site generator written in Go.</p>
-
-<p><a href="/about">about page</a></p>
-
-<p><a href="/post/post1">post 1</a></p>
-
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. <a href="/">Duis</a> aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
         
-            <div>
-                <h3>Go-Forth</h3>
-                <p>A static site generator written in Go.</p>
-            </div>
         
+        <p><strong>A static site generator written in Go.</strong></p>
+
+<h3>Getting Started</h3>
+
+<ul>
+<li>Clone the repository</li>
+<li>Make sure you have Go installed</li>
+<li>Run &ldquo;go get&rdquo; to install dependencies</li>
+<li>To build use go</li>
+<li>To run the dev server use</li>
+</ul>
+
+<h3>Add Content</h3>
+
+<p>Add Markdown files to the content directory. Folders within the content directory are collections of content. The page collection is special because markdown files placed here resolve to /$filename. You should place your index.md file here, which will resolve to the route of your site.</p>
+
+<h3>Create Collections</h3>
+
+<p>Want to create a new collection? Just add a folder to the content directory. If you are running the dev server, a corresponding template will be created for the collection in the template directory.</p>
+
+<h3>Display Data</h3>
+
+<p>If you want to display some data add a json file with some objects to the data directory. Then in the template you would like to display the data add a {{ range .Data.$filename }}
+                {{ .$key }}
+                {{ .$key }}
+        {{ end }} to display a list of your data.</p>
+
+<h3>Create Themes</h3>
+
+<p>I decided to create a themes directory where you can add css files and then point to the one you want to use in the config file. When you build the site the theme will get copied to the assets&rsquo; css directory. You can add your other static assets like images and js files to the assets directory.</p>
+
+<h3>Edit &amp; Create Templates</h3>
+
+<p>Add html templates to the templates directory to provide some structure to your content. This project uses Go&rsquo;s html/template package. I recommend reading the documentation to learn more about its templating features.</p>
+
+<h3>Production</h3>
+
+<p>When you build the site for production all the necessary files will be placed in the src directory. This is the directory you will want to point to when hosting your site.</p>
+
+<h3>Housekeeping</h3>
+
+<p>The routes will have the .html extension. If your hosting provider has a way to clean the url, I recommend doing that or you will need to add the .html extension to all the routes in your project. I&rsquo;m working on a way to fix this. The dev server is setup so that routes resolve without the .html file extension.</p>
+
+<h3>Thanks to</h3>
+
 
     </main>
     <footer>made by Thomas</footer>
