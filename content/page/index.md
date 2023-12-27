@@ -9,9 +9,9 @@ description: 'Post 1 this is.'
 
 - Clone the repository
 - Make sure you have Go installed 
-- Run "go get" to install dependencies
-- To build use go 
-- To run the dev server use
+- When you run 'go build' dependencies will automatically be installed
+- To build the static site run 'go build ./build/cmd/main.go' then './main build'
+- To start the dev server run 'go build ./build/cmd/main.go' then './main dev'
 
 ### Add Content
 
@@ -30,7 +30,7 @@ If you want to display some data add a json file with some objects to the data d
 
 ### Create Themes
 
-I decided to create a themes directory where you can add css files and then point to the one you want to use in the config file. When you build the site the theme will get copied to the assets' css directory. You can add your other static assets like images and js files to the assets directory.
+Add css files(themes) and then point to the one you want to use in the config file. When you build the site the theme will get copied to the assets' css directory. You can add your other static assets like images and js files to the assets directory. Also, add your favicon to the assets directory!
 
 ### Edit & Create Templates
 
@@ -45,3 +45,5 @@ When you build the site for production all the necessary files will be placed in
 The routes will have the .html extension. If your hosting provider has a way to clean the url, I recommend doing that or you will need to add the .html extension to all the routes in your project. I'm working on a way to fix this. The dev server is setup so that routes resolve without the .html file extension.
 
 ### Thanks to
+
+Russ Ross's [blackfriday](https://github.com/russross/blackfriday) and Go's standard library!

@@ -6,7 +6,7 @@
 
   body {
     margin: auto;
-    padding: 4px;
+    padding: 8px;
     max-width: 624px;
     line-height: 2;
     letter-spacing: .2px;
@@ -51,18 +51,14 @@ nav h2 {
 
 main a {
     /* box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px; */
-    
-    text-decoration: none;
     color: black;
     padding: 2px;
     padding-left: 4px;
     padding-right: 4px;
-    
+    text-decoration-color: blueviolet;
 }
 
 main a:hover {
-    background-color: blueviolet;
-    box-shadow: none;
-    color: white;
+    text-decoration-color: black;
 }
 
