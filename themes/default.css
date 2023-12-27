@@ -6,6 +6,7 @@
 
   body {
     margin: auto;
+    padding: 4px;
     max-width: 624px;
     line-height: 2;
     letter-spacing: .2px;
