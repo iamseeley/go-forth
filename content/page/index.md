@@ -7,7 +7,7 @@ description: 'Post 1 this is.'
 
 ### Getting Started
 
-- Clone the repository
+- Clone the [repository](https://github.com/iamseeley/go-forth2.0)
 - Make sure you have Go installed 
 - When you run 'go build' the dependencies will automatically be installed
 - To build the static site run 'go build ./build/cmd/main.go' then './main build'
@@ -28,6 +28,7 @@ description: 'Post 1 this is.'
               <li>css/</li>
               <li>images/</li>
               <li>js/</li>
+              <li>favicon.ico</li>
             </ul>
           </details>
         </li>
@@ -36,12 +37,12 @@ description: 'Post 1 this is.'
           <details>
             <summary>content/</summary>
             <ul>
-              <li>index.md</li>
+              <li><a href="/">index.md</a></li>
               <li>
                 <details>
                   <summary>post/</summary>
                   <ul>
-                    <li>post1.md</li>
+                    <li><a href="/post/post1">post1.md</a></li>
                   </ul>
                 </details>
               </li>
@@ -88,7 +89,7 @@ Add Markdown files to the content directory. Folders within the content director
 
 ### Create Collections
 
-Want to create a new collection? Just add a folder to the content directory. If you are running the dev server, a corresponding template will be created for the collection in the template directory. 
+Want to create a new collection? Just add a folder to the content directory. Make sure to add a template with the same filename as the collection. If you are running the dev server and you add a new collection, a corresponding template will be created in the template directory. 
 
 ### Display Data
 
