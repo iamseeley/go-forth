@@ -20,10 +20,78 @@
 <ul>
 <li>Clone the repository</li>
 <li>Make sure you have Go installed</li>
-<li>Run &ldquo;go get&rdquo; to install dependencies</li>
-<li>To build use go</li>
-<li>To run the dev server use</li>
+<li>When you run &lsquo;go build&rsquo; the dependencies will automatically be installed</li>
+<li>To build the static site run &lsquo;go build ./build/cmd/main.go&rsquo; then &lsquo;./main build&rsquo;</li>
+<li>To start the dev server run &lsquo;go build ./build/cmd/main.go&rsquo; then &lsquo;./main dev&rsquo;</li>
 </ul>
+
+<h3>Structure</h3>
+
+<div>
+<ul class="structure">
+  <li>
+    <details>
+      <summary>go-forth2.0/</summary>
+      <ul>
+        <li>
+          <details>
+            <summary>assets/</summary>
+            <ul>
+              <li>css/</li>
+              <li>images/</li>
+              <li>js/</li>
+            </ul>
+          </details>
+        </li>
+        <li>build stuffs/</li>
+        <li>
+          <details>
+            <summary>content/</summary>
+            <ul>
+              <li>index.md</li>
+              <li>
+                <details>
+                  <summary>post/</summary>
+                  <ul>
+                    <li>post1.md</li>
+                  </ul>
+                </details>
+              </li>
+            </ul>
+          </details>
+        </li>
+        <li>
+          <details>
+            <summary>data/</summary>
+            <ul>
+              <li>data.json</li>
+            </ul>
+          </details>
+        </li>
+        <li>src/ (output)</li>
+        <li>
+          <details>
+            <summary>templates/</summary>
+            <ul>
+              <li>page.html</li>
+              <li>site.html</li>
+            </ul>
+          </details>
+        </li>
+        <li>
+          <details>
+            <summary>themes/</summary>
+            <ul>
+              <li>default.css</li>
+            </ul>
+          </details>
+        </li>
+        <li>config.json</li>
+      </ul>
+    </details>
+  </li>
+</ul>
+</div>
 
 <h3>Add Content</h3>
 
@@ -42,7 +110,7 @@
 
 <h3>Create Themes</h3>
 
-<p>I decided to create a themes directory where you can add css files and then point to the one you want to use in the config file. When you build the site the theme will get copied to the assets&rsquo; css directory. You can add your other static assets like images and js files to the assets directory.</p>
+<p>Add css files(themes) and then point to the one you want to use in the config file. When you build the site the theme will get copied to the assets&rsquo; css directory. You can add your other static assets like images and js files to the assets directory. Also, add your favicon to the assets directory!</p>
 
 <h3>Edit &amp; Create Templates</h3>
 
@@ -57,6 +125,8 @@
 <p>The routes will have the .html extension. If your hosting provider has a way to clean the url, I recommend doing that or you will need to add the .html extension to all the routes in your project. I&rsquo;m working on a way to fix this. The dev server is setup so that routes resolve without the .html file extension.</p>
 
 <h3>Thanks to</h3>
+
+<p>Russ Ross&rsquo;s <a href="https://github.com/russross/blackfriday">blackfriday</a> and Go&rsquo;s standard library!</p>
 
 
     </main>

@@ -13,6 +13,7 @@
 }
 
 h1, h2, h3, h4, h5 {
+    margin-top: 24px;
     line-height: 1.5;
 }
 
@@ -62,3 +63,7 @@ main a:hover {
     text-decoration-color: black;
 }
 
+
+.structure {
+    list-style-type: none;
+}

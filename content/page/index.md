@@ -9,9 +9,78 @@ description: 'Post 1 this is.'
 
 - Clone the repository
 - Make sure you have Go installed 
-- When you run 'go build' dependencies will automatically be installed
+- When you run 'go build' the dependencies will automatically be installed
 - To build the static site run 'go build ./build/cmd/main.go' then './main build'
 - To start the dev server run 'go build ./build/cmd/main.go' then './main dev'
+
+### Structure
+
+<div>
+<ul class="structure">
+  <li>
+    <details>
+      <summary>go-forth2.0/</summary>
+      <ul>
+        <li>
+          <details>
+            <summary>assets/</summary>
+            <ul>
+              <li>css/</li>
+              <li>images/</li>
+              <li>js/</li>
+            </ul>
+          </details>
+        </li>
+        <li>build stuffs/</li>
+        <li>
+          <details>
+            <summary>content/</summary>
+            <ul>
+              <li>index.md</li>
+              <li>
+                <details>
+                  <summary>post/</summary>
+                  <ul>
+                    <li>post1.md</li>
+                  </ul>
+                </details>
+              </li>
+            </ul>
+          </details>
+        </li>
+        <li>
+          <details>
+            <summary>data/</summary>
+            <ul>
+              <li>data.json</li>
+            </ul>
+          </details>
+        </li>
+        <li>src/ (output)</li>
+        <li>
+          <details>
+            <summary>templates/</summary>
+            <ul>
+              <li>page.html</li>
+              <li>site.html</li>
+            </ul>
+          </details>
+        </li>
+        <li>
+          <details>
+            <summary>themes/</summary>
+            <ul>
+              <li>default.css</li>
+            </ul>
+          </details>
+        </li>
+        <li>config.json</li>
+      </ul>
+    </details>
+  </li>
+</ul>
+</div>
+
 
 ### Add Content
 
