@@ -57,6 +57,16 @@ main a {
     text-decoration-color: blueviolet;
 }
 
+footer a {
+    color: black;
+    
+    text-decoration-color: blueviolet;
+}
+
+footer a:hover {
+    text-decoration-color: black;
+}
+
 main a:hover {
     text-decoration-color: black;
 }
