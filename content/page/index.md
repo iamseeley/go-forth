@@ -7,6 +7,7 @@ description: 'Post 1 this is.'
 
 ### Getting Started
 
+
 - Clone the [repository](https://github.com/iamseeley/go-forth2.0)
 - Make sure you have Go installed 
 - When you run 'go build' the dependencies will automatically be installed
