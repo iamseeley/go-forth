@@ -1,16 +1,5 @@
 {{ define "site" }}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Go-Forth - {{.Page.Title}}</title>
-    <link type="text/css" rel="stylesheet" href="/public/css/{{.Page.Theme}}.css">
-</head>
-<body>
-    <header><nav><div></div><a href="/">home</a><a href="/">post</a></nav></header>
-    
-    <main>
+{{template "_top" .}}
         <h2>{{.Page.Title}}</h2>
 
 
@@ -22,8 +11,5 @@
             </div>
         {{ end }}
 
-    </main>
-    <footer>made by <span><a href="https://tseeley.com">Thomas</a></span></footer>
-</body>
-</html>
+{{template "_bottom" .}}
 {{ end }}

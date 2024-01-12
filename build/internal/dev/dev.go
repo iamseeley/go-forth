@@ -2,11 +2,7 @@ package dev
 
 import (
 	"bytes"
-	"encoding/json"
-	"errors"
 	"fmt"
-	"html/template"
-	"io"
 	"log"
 	"net/http"
 	"os"
@@ -14,21 +10,13 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/fsnotify/fsnotify"
-	"github.com/go-yaml/yaml"
-	"github.com/russross/blackfriday/v2"
 	"go-forth2.0/build/internal/config"
+	"go-forth2.0/build/internal/models"
+	"go-forth2.0/build/internal/ogimage"
+	"go-forth2.0/build/internal/utils"
+
+	"github.com/fsnotify/fsnotify"
 )
-
-// Now you can use cfg to access your configuration settings
-
-// Define a data structure for your site pages
-type Page struct {
-	Title       string
-	Description string
-	Body        []byte
-	Theme       string
-}
 
 func watchContentDirectory(contentDir, templateDir string) {
 	watcher, err := fsnotify.NewWatcher()
@@ -48,7 +36,11 @@ func watchContentDirectory(contentDir, templateDir string) {
 			if event.Op&fsnotify.Create == fsnotify.Create {
 				info, err := os.Stat(event.Name)
 				if err == nil && info.IsDir() {
+					// Create default template for the new directory
 					createTemplateForDir(filepath.Base(event.Name), templateDir)
+
+					// Create base.md in the new directory
+					createBaseMD(event.Name)
 				}
 			}
 		case err := <-watcher.Errors:
@@ -57,37 +49,192 @@ func watchContentDirectory(contentDir, templateDir string) {
 	}
 }
 
+func createBaseMD(dirPath string) {
+	baseMDContent := `---
+title: "Title"
+description: "Description"
+date: "YYYY-MM-DD"
+draft: true
+---
+`
+	baseMDPath := filepath.Join(dirPath, "base.md")
+	err := os.WriteFile(baseMDPath, []byte(baseMDContent), 0644)
+	if err != nil {
+		log.Printf("Failed to create base.md in %s: %v", dirPath, err)
+	} else {
+		log.Printf("Created base.md in %s", dirPath)
+	}
+}
+
+func watchForNewMarkdownFiles(contentDir string) {
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer watcher.Close()
+
+	// Add contentDir and its immediate subdirectories to the watcher
+	err = filepath.Walk(contentDir, func(path string, info os.FileInfo, err error) error {
+		if info.IsDir() && (path == contentDir || filepath.Dir(path) == contentDir) {
+			return watcher.Add(path)
+		}
+		return nil
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for {
+		select {
+		case event := <-watcher.Events:
+			if event.Op&fsnotify.Create == fsnotify.Create {
+				info, err := os.Stat(event.Name)
+				if err != nil || info.IsDir() {
+					continue
+				}
+				if filepath.Ext(event.Name) == ".md" {
+					collection := filepath.Base(filepath.Dir(event.Name))
+					if collection != filepath.Base(contentDir) { // Exclude files directly in contentDir
+						appendFrontmatter(event.Name, collection, contentDir)
+					}
+				}
+			}
+		case err := <-watcher.Errors:
+			log.Println("error:", err)
+		}
+	}
+}
+
+func appendFrontmatter(filePath, collection string, contentDir string) error {
+	// Construct the path for base.md in the collection
+	baseFilePath := filepath.Join(contentDir, collection, "base.md")
+
+	// Read the content of base.md
+	baseContent, err := os.ReadFile(baseFilePath)
+	if err != nil {
+		log.Printf("Error reading base.md for collection %s: %v", collection, err)
+		return err
+	}
+
+	// Extract frontmatter from base.md
+	start := bytes.Index(baseContent, []byte("---"))
+	if start == -1 {
+		return fmt.Errorf("frontmatter delimiter not found in base.md of collection: %s", collection)
+	}
+	end := bytes.Index(baseContent[start+3:], []byte("---"))
+	if end == -1 {
+		return fmt.Errorf("closing frontmatter delimiter not found in base.md of collection: %s", collection)
+	}
+	frontmatterTemplate := string(baseContent[start : start+3+end+3])
+
+	// Read the existing content of the file being processed
+	existingContent, err := os.ReadFile(filePath)
+	if err != nil {
+		return err
+	}
+
+	// Create a new file with the same name (overwriting the existing file)
+	file, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	// Write the frontmatter template and then the existing content to the file
+	if _, err := file.WriteString(frontmatterTemplate + "\n" + string(existingContent)); err != nil {
+		return err
+	}
+
+	log.Printf("Frontmatter from base.md appended to file in collection '%s': %s", collection, filePath)
+	return nil
+}
+
+// func appendFrontmatter(filePath, collection string) error {
+// 	// Define frontmatter templates for each collection
+// 	templates := map[string]string{
+// 		"notes": `---
+// title: Your Note Title
+// summary: A brief summary of the note.
+// tags: [tag1, tag2]
+// date: YYYY-MM-DD
+// draft: false
+// ---
+// `,
+// 		"logs": `---
+// title: Your Log Title
+// date: YYYY-MM-DD
+// draft: false
+// content:
+// ---
+// `,
+// 		"page": `---
+// title: Your Page Title
+// description: A brief description of the page
+// draft: false
+// ---
+// `,
+// 		"posts": `---
+// title: Your Post Title
+// description: A brief description of the post
+// date: YYYY-MM-DD
+// draft: false
+// ---
+// `,
+// 		"collections": `---
+// title: Your Collection Title
+// description: A brief description of the collection
+// type: Link, Book, Blog, etc...?
+// draft: false
+// ---
+// `,
+// 		// Add more templates for other collections as needed
+// 	}
+
+// 	// Select the appropriate template based on the collection name
+// 	template, ok := templates[collection]
+// 	if !ok {
+// 		log.Printf("No frontmatter template for collection: %s", collection)
+// 		return fmt.Errorf("no frontmatter template for collection: %s", collection)
+// 	}
+
+// 	// Read the existing content of the file
+// 	existingContent, err := os.ReadFile(filePath)
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	// Create a new file with the same name (overwriting the existing file)
+// 	file, err := os.Create(filePath)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	defer file.Close()
+
+// 	// Write the template and then the existing content to the file
+// 	if _, err := file.WriteString(template + string(existingContent)); err != nil {
+// 		return err
+// 	}
+
+// 	log.Printf("Frontmatter appended to file in collection '%s': %s", collection, filePath)
+// 	return nil
+// }
+
 func createTemplateForDir(dirName, templateDir string) {
 	templatePath := filepath.Join(templateDir, dirName+".html")
 	if _, err := os.Stat(templatePath); os.IsNotExist(err) {
 		// Basic HTML template content
 		templateContent := fmt.Sprintf(`
 {{ define "%s" }}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Go-Forth - {{.Page.Title}}</title>
-	<link type="text/css" rel="stylesheet" href="/public/css/{{.Page.Theme}}.css">
-</head>
-<body>
-	<header><nav><div></div><a href="/">home</a><a href="/">post</a></nav></header>
-	
-	<main>
-		<h2>{{.Page.Title}}</h2>
-		{{ .Page.Body | markDown }}
-		{{ range .Data.projects }}
-			<div>
-				<h3>{{ .name }}</h3>
-				<p>{{ .description }}</p>
-			</div>
-		{{ end }}
+{{template "_top" .}}
 
-	</main>
-	<footer>made by Thomas</footer>
-</body>
-</html>
+	<section>
+		<h2>{{.Page.Title}}</h2>
+		<article>
+		{{ .Page.Body | markDown }}
+		</article>
+	</section>
+
+{{template "_bottom" .}}
 {{ end }}
 `, dirName)
 
@@ -100,89 +247,6 @@ func createTemplateForDir(dirName, templateDir string) {
 	}
 }
 
-// Load site pages written in Markdown from a directory
-func loadPageFromDirectory(directory, title string) (*Page, error) {
-	filename := directory + title
-	content, err := os.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
-
-	frontMatter, body, err := parseFrontMatter(content)
-	if err != nil {
-		return nil, err
-	}
-
-	var page Page
-	if title, ok := frontMatter["title"].(string); ok {
-		page.Title = title
-	}
-	if description, ok := frontMatter["description"].(string); ok {
-		page.Description = description
-	}
-
-	cfg, err := config.LoadConfig("./config.json") // Load configuration
-	if err != nil {
-		return nil, err
-	}
-
-	page.Theme = cfg.ThemeName
-	page.Body = body
-
-	return &page, nil
-}
-
-func parseFrontMatter(content []byte) (map[string]interface{}, []byte, error) {
-	frontMatter := make(map[string]interface{})
-	var contentStart int
-
-	delimiter := []byte("---")
-	start := bytes.Index(content, delimiter)
-	if start == -1 {
-		return nil, nil, errors.New("Front matter delimiter not found")
-	}
-
-	end := bytes.Index(content[start+len(delimiter):], delimiter)
-	if end == -1 {
-		return nil, nil, errors.New("Second front matter delimiter not found")
-	}
-
-	if err := yaml.Unmarshal(content[start+len(delimiter):start+len(delimiter)+end], &frontMatter); err != nil {
-		return nil, nil, err
-	}
-
-	contentStart = start + len(delimiter) + end + len(delimiter)
-	actualContent := content[contentStart:]
-
-	return frontMatter, actualContent, nil
-}
-
-func loadData(directory string) (map[string]interface{}, error) {
-	data := make(map[string]interface{})
-	err := filepath.Walk(directory, func(path string, info os.FileInfo, err error) error {
-		if filepath.Ext(path) == ".json" {
-			fileData, err := os.ReadFile(path)
-			if err != nil {
-				return err
-			}
-
-			var jsonData interface{}
-			if err := json.Unmarshal(fileData, &jsonData); err != nil {
-				return err
-			}
-
-			key := filepath.Base(path)
-			key = strings.TrimSuffix(key, filepath.Ext(key)) // Use filename as the key
-			data[key] = jsonData
-		}
-		return nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	return data, nil
-}
-
 func pageHandler(w http.ResponseWriter, r *http.Request, filePath string) {
 	cfg, err := config.LoadConfig("./config.json")
 	if err != nil {
@@ -192,22 +256,27 @@ func pageHandler(w http.ResponseWriter, r *http.Request, filePath string) {
 
 	log.Printf("Constructed file path: %s", filePath)
 
-	data, err := loadData("data")
+	data, err := utils.LoadData(cfg.DataPath)
 	if err != nil {
 		log.Printf("Failed to load data: %v", err)
 	}
 
-	p, err := loadPageFromDirectory(cfg.ContentPath, filePath)
+	p, err := utils.LoadPageFromDirectory(cfg.ContentPath, filePath)
 	if err != nil {
 		log.Printf("Error loading page: %v", err) // Log the error for debugging
 		http.Error(w, "Page not found", http.StatusNotFound)
 		return
 	}
 
+	// Generate the OG Image URL
+	ogImageFileName := strings.TrimSuffix(filepath.Base(filePath), filepath.Ext(filePath)) + "-og-image.png"
+	ogImageUrl := "/public/og-image/" + ogImageFileName
+	p.OGImageURL = ogImageUrl
+
 	collection := filepath.Base(filepath.Dir(filePath))
 
 	templateData := struct {
-		Page *Page
+		Page *models.Content
 		Data map[string]interface{}
 	}{
 		Page: p,
@@ -215,46 +284,13 @@ func pageHandler(w http.ResponseWriter, r *http.Request, filePath string) {
 	}
 
 	tmplName := collection
-	tmpl := templates.Lookup(tmplName + ".html")
+	tmpl := utils.Templates.Lookup(tmplName + ".html")
 	if tmpl == nil {
 		log.Printf("Template %s.html not found, using default site.html", tmplName)
-		tmpl = templates.Lookup("site.html")
+		tmpl = utils.Templates.Lookup("site.html")
 	}
 
-	renderTemplate(w, tmplName, templateData)
-}
-
-func markDowner(args ...interface{}) template.HTML {
-	s := blackfriday.Run([]byte(fmt.Sprintf("%s", args...)))
-	return template.HTML(s)
-}
-
-// var templates = template.Must(template.New("").Funcs(template.FuncMap{"markDown": markDowner}).ParseGlob("templates/*.html"))
-
-var templates *template.Template
-
-func loadTemplates() error {
-	var err error
-	templates, err = template.New("").Funcs(template.FuncMap{"markDown": markDowner}).ParseGlob("templates/*.html")
-	if err != nil {
-		return fmt.Errorf("error loading templates: %w", err)
-	}
-	return nil
-}
-
-func init() {
-	err := loadTemplates()
-	if err != nil {
-		log.Fatalf("Failed to load templates: %v", err)
-	}
-}
-
-func renderTemplate(w http.ResponseWriter, tmpl string, content interface{}) {
-	err := templates.ExecuteTemplate(w, tmpl, content)
-	if err != nil {
-		log.Printf("Error rendering template: %v", err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	utils.RenderTemplateDev(w, tmplName, templateData)
 }
 
 var validPath = regexp.MustCompile("^/([a-zA-Z0-9]+)$")
@@ -275,61 +311,6 @@ func setCacheHeaders(w http.ResponseWriter, maxAge int) {
 	w.Header().Set("Cache-Control", fmt.Sprintf("max-age=%d", maxAge))
 }
 
-func copyFile(src, dst string) error {
-	source, err := os.Open(src)
-	if err != nil {
-		return err
-	}
-	defer source.Close()
-
-	destination, err := os.Create(dst)
-	if err != nil {
-		return err
-	}
-	defer destination.Close()
-
-	_, err = io.Copy(destination, source)
-	return err
-}
-
-func copyDir(src string, dst string) error {
-	// Get properties of source dir
-	srcInfo, err := os.Stat(src)
-	if err != nil {
-		return err
-	}
-
-	// Create the destination directory
-	err = os.MkdirAll(dst, srcInfo.Mode())
-	if err != nil {
-		return err
-	}
-
-	directory, _ := os.Open(src)
-	objects, err := directory.Readdir(-1)
-
-	for _, obj := range objects {
-		srcFile := filepath.Join(src, obj.Name())
-		dstFile := filepath.Join(dst, obj.Name())
-
-		if obj.IsDir() {
-			// Create sub-directories - recursively
-			err = copyDir(srcFile, dstFile)
-			if err != nil {
-				return err
-			}
-		} else {
-			// Perform the file copy
-			err = copyFile(srcFile, dstFile)
-			if err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
 func StartServer() {
 	// Load configuration
 	cfg, err := config.LoadConfig("./config.json")
@@ -337,16 +318,21 @@ func StartServer() {
 		log.Fatalf("Failed to load config: %v", err)
 	}
 
+	err = utils.ConvertMarkdownToJSON(cfg.ContentPath, cfg.DataPath)
+	if err != nil {
+		log.Fatalf("Error converting markdown to JSON: %v", err)
+	}
+
 	// Copy the theme CSS to the assets/css directory
 	themeCSSPath := filepath.Join("themes", cfg.ThemeName+".css")
 	assetsCSSPath := filepath.Join("assets/css", cfg.ThemeName+".css")
 	os.MkdirAll(filepath.Dir(assetsCSSPath), os.ModePerm) // Create the assets/css directory
-	err = copyFile(themeCSSPath, assetsCSSPath)
+	err = utils.CopyFile(themeCSSPath, assetsCSSPath)
 	if err != nil {
 		log.Fatalf("Failed to copy theme CSS to assets directory: %v", err)
 	}
 
-	err = loadTemplates()
+	err = utils.LoadTemplates()
 	if err != nil {
 		log.Fatalf("Failed to load templates: %v", err)
 	}
@@ -358,12 +344,14 @@ func StartServer() {
 	// Copy the assets directory to public in the output directory
 	assetsSrc := "assets"
 	assetsDst := filepath.Join(outputDir, "public")
-	err = copyDir(assetsSrc, assetsDst)
+	err = utils.CopyDir(assetsSrc, assetsDst)
 	if err != nil {
 		log.Fatalf("Failed to copy assets directory: %v", err)
 	}
 
+	go ogimage.GenerateAllOGImages(cfg.ContentPath, "assets/og-image/")
 	go watchContentDirectory("content", "templates")
+	go watchForNewMarkdownFiles("content")
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		switch {

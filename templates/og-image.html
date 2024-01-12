@@ -1,0 +1,44 @@
+{{ define "og-image" }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #1e2021;
+            color: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
+        .content {
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 6em;
+        }
+        h1, h3 {
+            
+            color: #f5f5f5;
+        }
+        p {
+            font-size: 3em;
+            color: #678CFC;
+        }
+    </style>
+    <title>{{.Title}}</title>
+</head>
+<body>
+    <div class="content">
+        <h1>{{.Title}}</h1>
+        <!-- <h3>{{.Collection}}</h3> -->
+        <p>go-forth.tseeley.com</p>
+    </div>
+</body>
+</html>
+{{ end }}
