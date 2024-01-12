@@ -8,7 +8,7 @@ Go-Forth is a static site generator written in Go.
 
 1. Clone the [repository](https://github.com/iamseeley/go-forth2.0)
 2. Make sure you have Go installed
-3. Run 'npm install' to install puppeteer
+3. Run 'npm install' to install puppeteer (for og-image generation)
 4. To start the dev server run 'go build ./build/cmd/main.go' then './main dev'
 5. To build the static site run 'go build ./build/cmd/main.go' then './main build'
 
