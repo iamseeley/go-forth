@@ -1,6 +1,6 @@
 ---
-title: 'Go-Forth 2.0'
-description: 'Post 1 this is.'
+title: 'Go-Forth'
+description: 'a static site generator written in go'
 ---
 
 **A static site generator written in Go.**
@@ -21,7 +21,7 @@ description: 'Post 1 this is.'
 <ul class="structure">
   <li>
     <details>
-      <summary>go-forth2.0/</summary>
+      <summary>go-forth/</summary>
       <ul>
         <li>
           <details>
