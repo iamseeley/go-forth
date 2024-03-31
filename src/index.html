@@ -6,15 +6,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>Go-Forth 2.0 ~ Go-Forth</title>
+    <title>Go-Forth ~ Go-Forth</title>
     
     <meta name="description" content="">
-    <meta property="og:title" content="Go-Forth 2.0 ~ Thomas Seeley">
+    <meta property="og:title" content="Go-Forth ~ Thomas Seeley">
     <meta property="og:description" content="">
     <meta property="og:image" content="/public/og-image/index-og-image.png">
     <meta name="twitter:site" content="@iamseeley">
     <meta name="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="Go-Forth 2.0">
+    <meta property="twitter:title" content="Go-Forth">
     <meta property="twitter:description" content="">
     <meta property="twitter:image" content="https://tseeley.com/public/og-image/index-og-image.png">
     <meta property="twitter:image:src" content="https://tseeley.com/public/og-image/index-og-image.png">
@@ -28,7 +28,7 @@
     <div class="wrap">
     
     <header>
-        <header><nav><div></div><h2>Go-Forth 2.0</h2></nav></header>
+        <header><nav><div></div><h2>Go-Forth</h2></nav></header>
     </header>
     <main>
 
@@ -38,13 +38,13 @@
 
 <h3>Getting Started</h3>
 
-<ul>
+<ol>
 <li>Clone the <a href="https://github.com/iamseeley/go-forth2.0">repository</a></li>
 <li>Make sure you have Go installed</li>
-<li>When you run &lsquo;go build&rsquo; the dependencies will automatically be installed</li>
-<li>To build the static site run &lsquo;go build ./build/cmd/main.go&rsquo; then &lsquo;./main build&rsquo;</li>
+<li>Run &lsquo;npm install&rsquo; to install puppeteer</li>
 <li>To start the dev server run &lsquo;go build ./build/cmd/main.go&rsquo; then &lsquo;./main dev&rsquo;</li>
-</ul>
+<li>To build the static site run &lsquo;go build ./build/cmd/main.go&rsquo; then &lsquo;./main build&rsquo;</li>
+</ol>
 
 <h3>Structure</h3>
 
@@ -52,7 +52,7 @@
 <ul class="structure">
   <li>
     <details>
-      <summary>go-forth2.0/</summary>
+      <summary>go-forth/</summary>
       <ul>
         <li>
           <details>
@@ -61,6 +61,7 @@
               <li>css/</li>
               <li>images/</li>
               <li>js/</li>
+              <li>og-image/</li>
               <li>favicon.ico</li>
             </ul>
           </details>
@@ -96,6 +97,7 @@
             <summary>templates/</summary>
             <ul>
               <li>page.html</li>
+              <li>og-image.html</li>
               <li>site.html</li>
             </ul>
           </details>
