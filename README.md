@@ -1,6 +1,6 @@
 # Go-Forth
 
-## a static site generator written in Go. 
+## A static site generator written in Go
 
 > go forth and build static sites my friend
 
