@@ -3,9 +3,7 @@ title: 'Go-Forth'
 description: 'a static site generator written in go'
 ---
 
-## a static site generator written in Go. 
-
-> go forth and build static sites my friend
+### a static site generator written in Go
 
 ### Getting Started
 
