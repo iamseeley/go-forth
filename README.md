@@ -2,7 +2,7 @@
 
 Go-Forth is a static site generator written in Go. 
 
-> "go forth and build static sites my friend"
+> go forth and build static sites my friend
 
 ![image](https://github.com/iamseeley/go-forth2.0/assets/104278845/82070d1c-052c-4470-b595-92717d4eb8fd)
 
